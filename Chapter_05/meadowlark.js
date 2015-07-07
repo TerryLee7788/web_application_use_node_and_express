@@ -6,15 +6,24 @@ var text = require('./lib/text.js');
 
 var app = express();
 
-// app.engine('handlebars', handlebars.engine);
 app.engine('handlebars', handlebars.engine);
 
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'handlebars');
 
-// static 中介軟體的效果就是, 為每一個要傳送的靜態檔案建立路由, 這個靜態檔案可以轉譯檔案並將它回傳給用戶端。
+/* 
+ * "static" 中介軟體的效果就是, 為每一個要傳送的靜態檔案建立路由, 這個靜態檔案可以轉譯檔案並將它回傳給用戶端。
+ *
+ * "__dirname" => 這個會被解析為正在值型的指令所在的目錄, 
+ * 舉例: 假設你的指令碼位於 "/home/site/index.js", "__dirname" 就會被解析為 "/home/site"
+ * 如果你在不同目錄執行的話, 將會造成難以尋找的錯誤
+ */
 app.use(express.static(__dirname + '/public'));
 
+/* 
+ * 如果test=1 出現在往頁的查詢字串(query string)中, 而且我們不是在 "producetion" 上面運行, 
+ * "res.locals.showTests" 特性會被設定為true, 而res.locals 物件是要傳遞給view 的 context 的一部分
+ */
 app.use(function (req, res, next) {
   res.locals.showTests = app.get('env') !== 'producetion' && req.query.test === '1';
   next();
@@ -22,14 +31,10 @@ app.use(function (req, res, next) {
 
 // set routes
 app.get('/', function (req, res) {
-  // res.type('text/plain');  // 內容類型的狀態碼
-  // res.send('Home page');
   res.render('home');
 });
 
 app.get('/about', function (req, res) {
-  // res.type('text/plain');
-  // res.send('About me');
   var random_text = text.getText();
   res.render('about', {
     text: random_text,
@@ -38,16 +43,12 @@ app.get('/about', function (req, res) {
 });
 
 app.use(function (req, res) {
-  // res.type('text/plain');
-  // res.send('404 - Not Found.');
   res.status('404');
   res.render('404');
 });
 
 app.use(function (err, req, res, next) {
   console.error(err.stack);
-  // res.type('text/plain');
-  // res.send('500 - Server Error');
   res.status('500');
   res.render('500');
 });
