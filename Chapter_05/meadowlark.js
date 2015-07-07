@@ -1,14 +1,14 @@
 var express = require('express');
-var handlebars = require('express3-handlebars').create({ defaultLayout: 'main'});
 
 // 注意 "./", 這個表示告訴我們不要尋找 "node_modules" 目錄之中的模組, 如果我們忽略這個符號則會發生錯誤
 var text = require('./lib/text.js');
 
 var app = express();
-
-app.engine('handlebars', handlebars.engine);
-
 app.set('port', process.env.PORT || 3000);
+
+// 設定 handlebar view 引擎
+var handlebars = require('express3-handlebars').create({ defaultLayout: 'main'});
+app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
 /* 
@@ -31,7 +31,15 @@ app.use(function (req, res, next) {
 
 // set routes
 app.get('/', function (req, res) {
-  res.render('home');
+  res.render('home'); // "home.handlebars" template
+});
+
+app.get('/tours/hood-river', function (req, res) {
+  res.render('tours/hood-river');
+});
+
+app.get('/tours/request-group-rate', function (req, res) {
+  res.render('tours/request-group-rate');
 });
 
 app.get('/about', function (req, res) {
