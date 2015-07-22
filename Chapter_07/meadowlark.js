@@ -1,22 +1,33 @@
-var express = require('express');
-var app = express();
+var express = require('express'),
+    app = express(),
+    hb = require('express3-handlebars'),
+    handlebars = hb.create({
+      defaultLayout: 'main',
+      helpers: {
+        section: function(name, options){
+          if(!this._sections) this._sections = {};
+          this._sections[name] = options.fn(this);
+          return null;
+        }
+      }
+    }),
+  getDate = function () {
+    return {
+      data: [
+        { name: 'Terry1' },
+        { name: 'Terry2' },
+        { name: 'Terry3' },
+        { name: 'Terry4' }
+      ]
+    }
+  };
+
+
 app.set('port', process.env.PORT || 3000);
 
 // 設定 handlebar view 引擎
-var handlebars = require('express3-handlebars').create({ defaultLayout: 'main'});
-app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
-
-function getDate() {
-  return {
-    data: [
-      { name: 'Terry1' },
-      { name: 'Terry2' },
-      { name: 'Terry3' },
-      { name: 'Terry4' }
-    ]
-  }
-}
+app.engine('handlebars', handlebars.engine);
 
 /* 
  * "static" 中介軟體的效果就是, 為每一個要傳送的靜態檔案建立路由, 這個靜態檔案可以轉譯檔案並將它回傳給用戶端。
@@ -43,6 +54,18 @@ app.use(function (req, res, next) {
 // set routes
 app.get('/', function (req, res) {
   res.render('home'); // "home.handlebars" template
+});
+
+app.get('/members.api', function (req, res) {
+  res.json({
+    "name": "Terry",
+    "age": "27",
+    "gender": "male"
+  });
+});
+
+app.get('/member', function (req, res) {
+  res.render('member');
 });
 
 app.use(function (req, res) {

@@ -1,0 +1,37 @@
+{{#section 'head'}}
+  <script type="text/javascript" src="http://terrylee.byethost11.com/lib/handlebars-v3.0.3.js"></script>
+  <script src="//code.jquery.com/jquery-2.0.2.min.js"></script>
+  <script type="text/x-handlebars-template" id="member_template">
+    <p>Name: \{{name}}</p>
+    <p>Age: \{{age}}</p>
+    <p>Sex: \{{gender}}</p>
+  </script>
+{{/section}}
+
+<div id="content">
+  Click the button
+</div>
+
+<hr>
+<button id="btn">Load Data</button>
+
+{{#section 'jquery'}}
+  <script>
+    $(function () {
+      var $content = $('#content'),
+          $btn = $('#btn'),
+          source = $('#member_template').html(),
+          template = Handlebars.compile(source);
+      
+      $btn.on('click', function () {
+        $.ajax({
+          url: '/members.api',
+          success: function (data) {
+            var json = data;
+            $content.html(template(json));
+          }
+        });
+      });
+    });
+  </script>
+{{/section}}
