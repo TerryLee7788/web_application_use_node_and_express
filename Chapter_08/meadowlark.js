@@ -64,7 +64,7 @@ app.get('/members.api', function (req, res) {
 
 app.get('/member', function (req, res) {
   res.render('member');
-});
+})
 
 app.get('/newsletter', function(req, res) {
   res.render('newsletter');
