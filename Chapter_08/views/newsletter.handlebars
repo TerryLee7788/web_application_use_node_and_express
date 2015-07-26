@@ -1,0 +1,35 @@
+<div id="content">
+  <form id="newsletter" action="/process?from=newsletter">
+    Name: <input type="text" name="name" />
+    email: <input type="text" name="email" />
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+{{#section 'jquery'}}
+  <script>
+    $(function () {
+      $('#newsletter').on('submit', function (e) {
+        e.preventDefault();
+        var $this = $(this),
+            $content = $('#content'),
+            action = $this.attr('action'),
+            error_text = 'There was a problem.';
+        $.ajax({
+          url: action,
+          type: 'POST',
+          success: function (data) {
+            if (data.success) {
+              $content.html('<h2>Thanks.</h2>');
+            } else {
+              $content.html('<h2>' + error_text + '</h2>');
+            }
+          },
+          error: function () {
+              $content.html('<h2>' + error_text + '</h2>');
+          }
+        });
+      });
+    });
+  </script>
+{{/section}}
